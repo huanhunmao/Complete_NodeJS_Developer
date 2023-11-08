@@ -1,0 +1,11 @@
+function decrypt(data){
+    return 'response data'
+}
+
+function read(){
+    return decrypt('data')
+}
+
+export {
+    read
+}
