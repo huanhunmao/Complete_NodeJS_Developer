@@ -1,10 +1,10 @@
-const {launches} = require('../../models/launches.model')
+const {getAllLaunches} = require('../../models/launches.model')
 
-function getAllLaunch(req, res){
+function httpGetAllLaunch(req, res){
     // Array.from 将数据拆分放到一个数组内
-    return res.status(200).json(Array.from(launches.values()))
+    return res.status(200).json(getAllLaunches())
 }
 
 module.exports = {
-    getAllLaunch
+    httpGetAllLaunch
 }

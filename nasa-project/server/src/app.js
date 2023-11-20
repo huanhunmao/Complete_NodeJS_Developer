@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')))
 app.use(planetsRouter)
 app.use(launchesRouter)
 // 确保第一页打开就是 index.html 内容
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '..','public','index.html'));
 } )
 
