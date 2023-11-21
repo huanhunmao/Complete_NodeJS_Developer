@@ -1,4 +1,4 @@
-const {getAllLaunches, addNewLaunch} = require('../../models/launches.model')
+const {getAllLaunches, addNewLaunch, existsLaunchWithId,abortLaunchById} = require('../../models/launches.model')
 
 function httpGetAllLaunch(req, res){
     // Array.from 将数据拆分放到一个数组内
@@ -27,7 +27,24 @@ function httpAddLaunch(req, res){
     return res.status(201).json(launch)
 }
 
+function httpAbortLaunch(req, res){
+    const launchId = Number(req.params.id)
+
+    if(!existsLaunchWithId(launchId)){
+    // if launch does not exist
+    return res.status(404).json({
+        error:'Launch does not exist'
+    })
+    }
+
+    // if launch does  exist
+    const aborted = abortLaunchById(launchId)
+    return res.status(200).json(aborted)
+
+}
+
 module.exports = {
     httpGetAllLaunch,
-    httpAddLaunch
+    httpAddLaunch,
+    httpAbortLaunch
 }
