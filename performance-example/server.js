@@ -1,5 +1,6 @@
 const express = require('express')
 const cluster = require('cluster')
+const os = require('os')
 
 const app = express()
 
@@ -27,8 +28,16 @@ console.log('running server.js');
 // 一个 tab 访问 /  一个访问 /timer  第一个 非常快
 if(cluster.isMaster) {
     console.log('Master is been started ... ');
-    cluster.fork()
-    cluster.fork()
+    // cluster.fork()
+    // cluster.fork()
+
+    // 根据 cpu 数量 来决定创建多少个 fork
+    const NUM_WORKERS = os.cpus().length 
+    console.log('NUM_WORKERS',NUM_WORKERS); // 12
+
+    for(let i = 0; i < NUM_WORKERS; i++){  // 这样 即使开 4个 tab 时间也都差不多是 9s
+        cluster.fork()
+    }
 }else{
     console.log('Worker is been started ... ');
     app.listen(PORT, () => {
