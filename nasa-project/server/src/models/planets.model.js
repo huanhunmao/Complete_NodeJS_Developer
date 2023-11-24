@@ -1,8 +1,7 @@
 const parse = require('csv-parse');
 const fs = require('fs');
 const path = require('path');
-
-const results = []
+const planets = require('./planets.mongo');
 
 // 宜居星球 条件
 function isHabitablePlanet(planet){
@@ -19,27 +18,40 @@ function loadPlanetsData(){
         comment:'#',
         columns: true
         }))
-        .on('data', (data) => {
+        .on('data', async (data) => {
             if(isHabitablePlanet(data)){
-                results.push(data);
+                // results.push(data);
+            //    await planets.create({ // 但问题是 会重复多次创建 
+            //         keplerName: data.kepler_name,
+            //     });
+            // 只创建 一次 使用 updateOne
+            await planets.updateOne({
+                keplerName: data.kepler_name,
+            },{
+                keplerName: data.kepler_name,
+            },{
+                upsert: true,
+            })
             }
         })
         .on('error', err => {
-            console.error(err);
+            console.error(`Could not save planet ${err}`);
             reject(err);
         })
-        .on('end', () => {
+        .on('end', async () => {
             // console.log(results.map((planet) => {
             //     return planet['kepler_name']
             // }));
-            console.log(`${results.length} habitable planets found!`);
+            const countPlanetsFound = (await getAllPlanets()).length;
+            console.log(`${countPlanetsFound} habitable planets found!`);
             resolve()
         })
     })
 }
 
-function getAllPlanets(){
-    return results
+async function getAllPlanets(){
+    // return results
+    return await planets.find({})
 }
 
 module.exports = {
