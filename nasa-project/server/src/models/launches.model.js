@@ -1,7 +1,7 @@
 const launchesDatabase = require('./launches.mongo')
 const planets = require('./planets.mongo')
 
-let lastFlightNumber = 100
+const DEFAULT_FLIGHT_NUMBER = 100
 
 const launch = {
     flightNumber: 100,
@@ -18,6 +18,16 @@ saveLaunch(launch)
 
 function existsLaunchWithId(launchId) {
     return launches.has(launchId)
+}
+
+async function getLatestFlightNumber(){
+    // findOne()用于查找匹配查询条件的第一条记录
+    // sort('-flightNumber')用于按照flightNumber字段降序排列结果
+    const latestLaunch = await launchesDatabase.findOne().sort('-flightNumber')
+
+    if(!latestLaunch) return DEFAULT_FLIGHT_NUMBER
+
+    return latestLaunch.flightNumber
 }
 
 async function getAllLaunches() {
@@ -44,17 +54,17 @@ async function saveLaunch(launch) {
     })
 }
 
-function addNewLaunch(launch) {
-    lastFlightNumber ++
-    launches.set(
-        lastFlightNumber,
-         Object.assign(launch,{
-            success: true,
-            upcoming: true,
-            customers:['ZTM','NASA'],
-            flightNumber: lastFlightNumber
-         })
-         )
+async function scheduleNewLaunch(launch) {
+    const newFlightNumber = await getLatestFlightNumber() + 1
+
+    const newLaunch = Object.assign(launch, {
+        success: true,
+        upcoming: true,
+        customers:['ZTM','NASA'],
+        flightNumber: newFlightNumber
+    })
+
+    await saveLaunch(newLaunch)
 }
 
 function abortLaunchById(launchId) {
@@ -66,7 +76,7 @@ function abortLaunchById(launchId) {
 
 module.exports = {
     getAllLaunches,
-    addNewLaunch,
+    scheduleNewLaunch,
     existsLaunchWithId,
     abortLaunchById
 }

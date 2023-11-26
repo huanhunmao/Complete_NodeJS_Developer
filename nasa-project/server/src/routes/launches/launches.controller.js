@@ -1,11 +1,11 @@
-const {getAllLaunches, addNewLaunch, existsLaunchWithId,abortLaunchById} = require('../../models/launches.model')
+const {getAllLaunches, scheduleNewLaunch, existsLaunchWithId,abortLaunchById} = require('../../models/launches.model')
 
 async function httpGetAllLaunch(req, res){
     // Array.from 将数据拆分放到一个数组内
     return res.status(200).json(await getAllLaunches())
 }
 
-function httpAddLaunch(req, res){
+async function httpAddLaunch(req, res){
     const launch = req.body 
 
     if(!launch.mission || !launch.rocket || !launch.target || !launch.launchDate){
@@ -22,7 +22,7 @@ function httpAddLaunch(req, res){
         })
     }
 
-    addNewLaunch(launch)
+    await scheduleNewLaunch(launch)
 
     return res.status(201).json(launch)
 }
