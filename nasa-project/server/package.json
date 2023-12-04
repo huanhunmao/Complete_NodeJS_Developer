@@ -13,10 +13,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "jest":{
+  "jest": {
     "testEnvironment": "node"
   },
   "dependencies": {
+    "axios": "^1.6.2",
     "cors": "^2.8.5",
     "csv-parse": "^5.5.2",
     "express": "^4.18.2",
