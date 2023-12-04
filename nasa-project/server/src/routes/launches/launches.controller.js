@@ -1,8 +1,12 @@
 const {getAllLaunches, scheduleNewLaunch, existsLaunchWithId,abortLaunchById} = require('../../models/launches.model')
+const {getPagination} = require('../../services/query')
 
 async function httpGetAllLaunch(req, res){
+    console.log(req.query);
+    const {skip, limit} = getPagination(req.query)
+    const launches = await getAllLaunches(skip,limit)
     // Array.from 将数据拆分放到一个数组内
-    return res.status(200).json(await getAllLaunches())
+    return res.status(200).json(launches)
 }
 
 async function httpAddLaunch(req, res){
